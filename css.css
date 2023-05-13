@@ -8,10 +8,10 @@ input {
 
 .dark{
     background-color: #000000;
-    color: #FFFFFF;
+    color: #000000;
 }
 
 .light{
     background-color: #FFFFFF;
-    color: #000000;
+    color: #FFFFFF;
 }
