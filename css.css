@@ -1,17 +1,7 @@
 body {
-    font-family : Consolas
+    font-family : Consolas;
 }
 
 input {
     font-family : Consolas
-}
-
-.dark{
-    background-color: #000000;
-    color: #000000;
-}
-
-.light{
-    background-color: #FFFFFF;
-    color: #FFFFFF;
 }

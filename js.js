@@ -36,11 +36,14 @@ const create_board = () => {
             const cell = document.createElement("td")
 
             if(dark){
-                cell.className = "dark"
+                cell.style.backgroundColor = "#000000"
+                cell.style.color = "#000000"
             }
             else{
-                cell.className = "light"
+                cell.style.backgroundColor = "#FFFFFF"
+                cell.style.color = "#FFFFFF"
             }
+            
             dark = !dark
 
             cell.id = String.fromCharCode(x + 65) + (y + 1)
@@ -58,9 +61,6 @@ const create_board = () => {
     document.getElementById("board").innerHTML = board.innerHTML
 }
 
-const place_pieces_western = () => {
-    
-}
 let rows = 0
 const new_piece = () => {
     const pieces = document.getElementById("pieces")
@@ -69,6 +69,8 @@ const new_piece = () => {
     const input_name = document.createElement("input")
     const input_symbol = document.createElement("input")
     const input_movement = document.createElement("input")
+    const input_position = document.createElement("input")
+    const input_player = document.createElement("input")
     input_name.type = "text"
     input_name.placeholder = "name"
     input_name.id = "in" + rows
@@ -78,23 +80,18 @@ const new_piece = () => {
     input_movement.type = "text"
     input_movement.placeholder = "movement"
     input_movement.id = "im" + rows
+    input_position.type = "text"
+    input_position.placeholder = "start position"
+    input_position.id = "ip" + rows
+    input_player.type = "number"
+    input_player.max = 2
+    input_player.min = 1
+    input_player.placeholder = "player"
+    input_player.id = "iP" + rows
 
     input_symbol.maxLength = 2
 
-    const input_save = document.createElement("input")
-    input_save.type = "button"
-    input_save.value = "save"
-    input_save.id = "save" + rows
-
-    const name = document.createElement("p")
-    const symbol = document.createElement("p")
-    const movement = document.createElement("p")
-
-    name.id = "n" + rows
-    symbol.id = "s" + rows
-    movement.id = "m" + rows
-
-    const vars = [input_name,input_symbol,input_movement,input_save,name,symbol,movement]
+    const vars = [input_name,input_symbol,input_movement,input_position,input_player]
 
     for(let i = 0; i < vars.length; i++){
         const cell = document.createElement("td")
@@ -102,18 +99,96 @@ const new_piece = () => {
         row.appendChild(cell)
     }
     
-    const rows_RAM = rows
-    document.getElementById("save" + rows).onclick = () => {
-        document.getElementById("n"+rows_RAM).innerHTML = document.getElementById("in"+rows_RAM).value
-        document.getElementById("s"+rows_RAM).innerHTML = document.getElementById("is"+rows_RAM).value
-        document.getElementById("m"+rows_RAM).innerHTML = document.getElementById("im"+rows_RAM).value
-    }
     rows++
+}
+
+let pieces = []
+const save_pieces = () => {
+    const table = document.getElementById("pieces")
+    pieces = []
+    for(let i = 0; i < table.rows.length; i++){
+        pieces[i] = [document.getElementById("in"+i).value
+        ,document.getElementById("is"+i).value
+        ,document.getElementById("im"+i).value
+        ,document.getElementById("ip"+i).value.toUpperCase()
+        ,document.getElementById("iP"+i).value
+        ,0]
+    }
+    console.log(pieces)
+}
+
+const refresh_pieces = () => {
+    create_board()
+    
+    for(let i = 0; i < pieces.length; i++){
+        const cell = document.getElementById(pieces[i][3].toUpperCase())
+        cell.textContent = pieces[i][1]
+        if(pieces[i][4] == 1){
+            cell.style.color = "#FF0000"
+        }
+        else{
+            cell.style.color = "#0000FF"
+        }
+        document.getElementById(pieces[i][3].toUpperCase()).innerHTML = cell.innerHTML
+    }
+}
+
+const place_pieces = () => {
+    save_pieces()
+    refresh_pieces()
+}
+
+const valid = (movement, from, to, count) => {
+    let resp = false
+
+    const moves = movement.split(",")
+    const from_div = from.match(/[a-zA-Z]+|[0-9]+/g)
+    const from_x = from_div[0].charCodeAt(0) - 65
+    const from_y = from_div[1] - 1
+    
+    const to_div = to.match(/[a-zA-Z]+|[0-9]+/g)
+    const to_x = to_div[0].charCodeAt(0) - 65
+    const to_y = to_div[1] - 1
+
+    for(let i = 0; i < moves.length; i++){
+        //here's where the magic happens
+        if(!resp){
+            const parms = moves[i].split("")
+
+            let condition = true
+            if(parms[0]=="i"){
+                if(count > 0){
+                    condition = false
+                }
+            }
+
+            resp = condition
+        }
+    }
+
+    return resp
+}
+
+const move = () => {
+    const from_RAW = document.getElementById("from").value.toUpperCase()
+    const to_RAW = document.getElementById("to").value.toUpperCase()
+
+    for(let i = 0; i < pieces.length; i++){
+        if(pieces[i][3] == from_RAW){
+            if(valid(pieces[i][2],from_RAW,to_RAW,pieces[i][5])){
+                pieces[i][5]++
+                pieces[i][2] = to_RAW
+                refresh_pieces()
+            }
+        }
+    }
 }
 
 const boot = () => {
     document.getElementById("create_board").onclick = create_board
     document.getElementById("new_piece").onclick = new_piece
+    document.getElementById("place_pieces").onclick = place_pieces
+    document.getElementById("move").onclick = move
 }
 
 boot()
