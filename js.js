@@ -139,7 +139,7 @@ const place_pieces = () => {
 }
 
 const valid = (movement, from, to, count) => {
-    let resp = false
+    let resp = true
 
     const moves = movement.split(",")
     const from_div = from.match(/[a-zA-Z]+|[0-9]+/g)
@@ -152,14 +152,18 @@ const valid = (movement, from, to, count) => {
 
     for(let i = 0; i < moves.length; i++){
         //here's where the magic happens
-        if(!resp){
+        if(resp){
             const parms = moves[i].split("")
 
+            console.log(parms)
             let condition = true
-            if(parms[0]=="i"){
-                if(count > 0){
-                    condition = false
+            for(let j = 0 ; j < parms.length; j++){
+                if(parms[j]=="i"){
+                    if(count > 0){
+                        condition = false
+                    }
                 }
+
             }
 
             resp = condition
@@ -175,9 +179,12 @@ const move = () => {
 
     for(let i = 0; i < pieces.length; i++){
         if(pieces[i][3] == from_RAW){
+            console.log(valid(pieces[i][2],from_RAW,to_RAW,pieces[i][5]))
             if(valid(pieces[i][2],from_RAW,to_RAW,pieces[i][5])){
-                pieces[i][5]++
-                pieces[i][2] = to_RAW
+                pieces[i][5] = pieces[i][5] + 1
+                console.log(pieces[i][3] +"="+ to_RAW)
+                pieces[i][3] = to_RAW
+                console.log(pieces[i][3] +"="+ to_RAW)
                 refresh_pieces()
             }
         }
