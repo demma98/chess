@@ -153,19 +153,29 @@ const valid = (movement, from, to, count) => {
     for(let i = 0; i < moves.length; i++){
         //here's where the magic happens
         if(resp){
-            const parms = moves[i].split("")
-
             console.log(parms)
             let condition = true
-            for(let j = 0 ; j < parms.length; j++){
-                if(parms[j]=="i"){
-                    if(count > 0){
-                        condition = false
+            let capture = false
+            if(/^i*$/.test(parms)){
+                if(count > 0){
+                    condition = false
+                }
+            }
+            if(condition){
+                if(/^~*$/.test(parms)){
+                }
+                else if(/^\^*$/.test(parms)){
+                }
+                else {
+                    if(is_piece(to)){
+                        capture = true
                     }
                 }
 
+                if(/^c*$/.test(parms) && capture){
+                    resp = false
+                }
             }
-
             resp = condition
         }
     }
@@ -189,6 +199,17 @@ const move = () => {
             }
         }
     }
+}
+
+const is_piece = (cell) => {
+    let resp = false
+    cell = cell.toUpperCase()
+    for(let i = 0; i < pieces.length; i++){
+        if(pieces[i][3] == cell){
+            resp = true
+        }
+    }
+    return resp
 }
 
 const boot = () => {
