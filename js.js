@@ -151,15 +151,52 @@ const valid = (movement, from, to, count) => {
     const to_y = to_div[1] - 1
 
     for(let i = 0; i < moves.length; i++){
+        let parms = moves[i]
         //here's where the magic happens
         if(resp){
             console.log(parms)
+            let directions = [true,true,true,true,true,true,true,true]  //like a clock
             let condition = true
             let capture = false
             if(/^i*$/.test(parms)){
                 if(count > 0){
                     condition = false
                 }
+            }
+
+            
+            if(/<>/.test(parms)){
+                directions = [true,true,false,true,true,true,false,true]
+            }
+            else if(/>=/.test(parms)){
+                directions = [true,true,true,false,false,false,true,true]
+            }
+            else if(/<=/.test(parms)){
+                directions = [false,false,true,true,true,true,true,false]
+            }
+            else if(/X>/.test(parms)){
+                directions = [false,true,false,false,false,false,false,true]
+            }
+            else if(/X</.test(parms)){
+                directions = [false,false,false,true,false,true,false,false]
+            }
+            else if(/\*/.test(parms)){
+                directions = [true,true,true,true,true,true,true,true]
+            }
+            else if(/\+/.test(parms)){
+                directions = [true,false,true,false,true,false,true,false]
+            }
+            else if(/>/.test(parms)){
+                directions = [true,true,false,false,false,false,false,true]
+            }
+            else if(/</.test(parms)){
+                directions = [false,false,false,true,true,true,false,false]
+            }
+            else if(/=/.test(parms)){
+                directions = [false,false,true,false,false,false,true,false]
+            }
+            else if(/X/.test(parms)){
+                directions = [false,true,false,true,false,true,false,true]
             }
             if(condition){
                 if(/^~*$/.test(parms)){
@@ -176,6 +213,7 @@ const valid = (movement, from, to, count) => {
                     resp = false
                 }
             }
+
             resp = condition
         }
     }
